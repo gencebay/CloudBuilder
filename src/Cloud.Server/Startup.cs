@@ -27,7 +27,7 @@ namespace Cloud.Server
             Configuration = builder.Build();
 
             _socketsBag = new ConcurrentBag<WebSocket>();
-            _timer = new Timer(new TimerCallback(TimerCallback), new { init = true }, 0, 5000);
+            _timer = new Timer(new TimerCallback(TimerCallback), new { init = true }, 0, 7000);
         }
 
         private void TimerCallback(object state)
@@ -56,8 +56,10 @@ namespace Cloud.Server
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddConsole(minLevel: LogLevel.Verbose);
             loggerFactory.AddDebug();
+
+            var logger = loggerFactory.CreateLogger(nameof(Startup));
 
             app.UseIISPlatformHandler();
 
@@ -74,10 +76,12 @@ namespace Cloud.Server
                     {
                         // TODO: Handle the socket here.
                         _socketsBag.Add(webSocket);
+                        logger.LogInformation("WebSocket Initiated");
                     }
                     else
                     {
                         _socketsBag.TryTake(out webSocket);
+                        logger.LogWarning("WebSocket closed!");
                     }
                 }
                 else

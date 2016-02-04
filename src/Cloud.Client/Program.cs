@@ -44,31 +44,12 @@ namespace Cloud.Client
                         //                                      buffer.Offset,
                         //                                      buffer.Count);
 
-                        var pushedData = Encoding.UTF8.GetString(buffer.Array);
+                        var pushedData = Encoding.UTF8.GetString(buffer.Array).TrimEnd(new char[] { (char)0 });
                         // Handle request here.
                         Console.WriteLine("Server pushed data: " + pushedData);
                         break;
                 }
             }
-        }
-
-        private static async Task RunTestAsync()
-        {
-            WebSocketClient client = new WebSocketClient();
-            WebSocket socket = await client.ConnectAsync(new Uri("ws://localhost:5005/"), CancellationToken.None);
-            byte[] data = new byte[100]; 
-            while (true)
-            {
-                // await socket.SendAsync(new ArraySegment<byte>(data), WebSocketMessageType.Text, true, CancellationToken.None);
-                WebSocketReceiveResult result;
-                do
-                {
-                    result = await socket.ReceiveAsync(new ArraySegment<byte>(data), CancellationToken.None);
-                    Console.WriteLine("Received: " + result.MessageType + ", " + result.Count + ", " + result.EndOfMessage);
-                } while (!result.EndOfMessage);
-                Console.WriteLine(Encoding.UTF8.GetString(data, 0, result.Count));
-            }
-            await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
         }
     }
 }

@@ -11,7 +11,7 @@
   },
 
   "dependencies": {
-    "Microsoft.AspNet.WebSockets.Client": "1.0.0-*"
+    "Microsoft.AspNetCore.WebSockets.Client": "0.1.0-*"
   },
 
   "commands": {

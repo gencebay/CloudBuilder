@@ -1,0 +1,24 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "Cloud.Client Console Application",
+  "authors": [ "gedem" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
+
+  "dependencies": {
+    "Microsoft.AspNetCore.WebSockets.Client": "0.1.0-*"
+  },
+
+  "commands": {
+    "Cloud.Client": "Cloud.Client"
+  },
+
+  "frameworks": {
+    "dnx451": { }
+  }
+}

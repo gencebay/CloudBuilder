@@ -28,7 +28,8 @@
         "System.Threading": "4.0.11-*",
         "System.Net.Http": "4.0.1-*",
         "System.Reflection.DispatchProxy": "4.0.1-*",
-        "System.Data.Common": "4.0.1-*"
+        "System.Data.Common": "4.0.1-*",
+        "System.Xml.XmlSerializer": "4.0.11-*"
       }
     }
   }

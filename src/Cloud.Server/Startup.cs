@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNet.Builder;
+﻿using Cloud.Server.Core;
+using Cloud.Server.Interfaces;
+using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,13 +11,16 @@ using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
+using Cloud.Server.Middleware;
+using Cloud.Server.Extensions;
+using Cloud.Common.Interfaces;
+using Cloud.Common.Contracts;
 
 namespace Cloud.Server
 {
     public class Startup
     {
-        private readonly ConcurrentBag<WebSocket> _socketsBag;
-        private readonly Timer _timer;
+        private readonly ConcurrentBag<IMessageDispatcher> _dispatcherBag;
 
         public Startup(IHostingEnvironment env)
         {
@@ -26,22 +31,7 @@ namespace Cloud.Server
 
             Configuration = builder.Build();
 
-            _socketsBag = new ConcurrentBag<WebSocket>();
-            _timer = new Timer(new TimerCallback(TimerCallback), new { init = true }, 0, 7000);
-        }
-
-        private void TimerCallback(object state)
-        {
-            var token = CancellationToken.None;
-            var type = WebSocketMessageType.Text;
-            var data = Encoding.UTF8.GetBytes($"Push from server: {DateTime.Now.ToString()}");
-            var buffer = new ArraySegment<byte>(data);
-
-            if (_socketsBag.Count > 0)
-            {
-                var webSocket = _socketsBag.FirstOrDefault(x => x.State == WebSocketState.Open);
-                webSocket.SendAsync(buffer, type, true, token);
-            }
+            _dispatcherBag = new ConcurrentBag<IMessageDispatcher>();
         }
 
         public IConfigurationRoot Configuration { get; set; }
@@ -51,6 +41,11 @@ namespace Cloud.Server
         {
             // Add framework services.
             services.AddMvc();
+
+            // Dependencies
+            services.AddSingleton<IClientMessageFactory, DefaultClientMessageFactory>();
+            services.AddSingleton<IMessageDispatcher, MessageDispatcher>();
+            services.AddInstance(typeof(ConcurrentBag<IMessageDispatcher>), _dispatcherBag);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,29 +62,7 @@ namespace Cloud.Server
 
             app.UseWebSockets();
 
-            app.Use(async (http, next) =>
-            {
-                if (http.WebSockets.IsWebSocketRequest)
-                {
-                    var webSocket = await http.WebSockets.AcceptWebSocketAsync();
-                    if (webSocket != null && webSocket.State == WebSocketState.Open)
-                    {
-                        // TODO: Handle the socket here.
-                        _socketsBag.Add(webSocket);
-                        logger.LogInformation("WebSocket Initiated");
-                    }
-                    else
-                    {
-                        _socketsBag.TryTake(out webSocket);
-                        logger.LogWarning("WebSocket closed!");
-                    }
-                }
-                else
-                {
-                    // Nothing to do here, pass downstream.  
-                    await next();
-                }
-            });
+            app.UseSocket();
         }
 
         // Entry point for the application.

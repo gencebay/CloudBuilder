@@ -1,8 +1,9 @@
-﻿using Cloud.Server.Controllers;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Http.Internal;
+﻿using Cloud.Common.Contracts;
+using Cloud.Common.Core;
+using Cloud.Common.Extensions;
+using Cloud.Common.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using System;
 using Xunit;
 
 namespace Cloud.Common.UnitTests
@@ -22,20 +23,15 @@ namespace Cloud.Common.UnitTests
         }
 
         [Fact]
-        public void ControllerCreation()
+        public void XmlCreationTest()
         {
-            var httpContext = GetHttpContext();
+            var messageFactory = ServiceProvider.GetService<IClientMessageFactory>();
+            
+            var encodedObject = messageFactory.CreateMessage(new MessageDefinitions{ Owner = "Server1" });
+            Assert.NotNull(encodedObject);
 
-            var services = GetServiceProvider(s =>
-            {
-                s.AddTransient<ILoggerFactory, LoggerFactory>();
-                s.AddScoped<IHttpContextAccessor>(x => new HttpContextAccessor { HttpContext = httpContext });
-            });
-
-            var projectController = new ProjectController();
-            projectController.ActionContext = CreateActionContext(httpContext);
-
-            Assert.NotNull(projectController.Echo("message body"));
+            var decodeObject = messageFactory.GetMessage<MessageDefinitions>(encodedObject.FromUtf8Bytes());
+            Assert.Equal(decodeObject.Owner, "Server1");
         }
     }
 }

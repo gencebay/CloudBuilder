@@ -173,28 +173,6 @@ namespace Cloud.Common.DependencyInjection
         }
 
         /// <summary>
-        /// Adds a singleton service of the type specified in <typeparamref name="TService"/> with an
-        /// implementation type specified in <typeparamref name="TImplementation"/> to the
-        /// specified <see cref="IServiceCollection"/>.
-        /// </summary>
-        /// <typeparam name="TService">The type of the service to add.</typeparam>
-        /// <typeparam name="TImplementation">The type of the implementation to use.</typeparam>
-        /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
-        /// <returns>A reference to this instance after the operation has completed.</returns>
-        /// <seealso cref="ServiceLifetime.Singleton"/>
-        public static IServiceCollection AddSingleton<TService, TImplementation>(this IServiceCollection services)
-            where TService : class
-            where TImplementation : class, TService
-        {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-
-            return services.AddSingleton(typeof(TService), typeof(TImplementation));
-        }
-
-        /// <summary>
         /// Adds a singleton service of the type specified in <paramref name="serviceType"/> to the
         /// specified <see cref="IServiceCollection"/>.
         /// </summary>

@@ -1,5 +1,5 @@
 ﻿using Cloud.Common.Contracts;
-using Cloud.Common.Core;
+using System;
 
 namespace Cloud.Common.Interfaces
 {
@@ -10,6 +10,21 @@ namespace Cloud.Common.Interfaces
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        string CreateMessage(MessageDefinitions messageDefinitions);
+        byte[] CreateMessage(MessageDefinitions messageDefinitions);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="messageDefinitions"></param>
+        /// <returns></returns>
+        ArraySegment<byte> CreateMessageSegment(MessageDefinitions messageDefinitions);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="serializedObject"></param>
+        /// <returns></returns>
+        T GetMessage<T>(string serializedObject);
     }
 }

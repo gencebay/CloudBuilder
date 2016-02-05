@@ -6,9 +6,19 @@ namespace Cloud.Common.Contracts
 {
     public class DefaultClientMessageFactory : IClientMessageFactory
     {
-        public string CreateMessage(MessageDefinitions messageDefinitions)
+        public byte[] CreateMessage(MessageDefinitions messageDefinitions)
         {
-            return messageDefinitions.CreateXmlMessage();
+            return messageDefinitions.CreateXml().ToUtf8Bytes();
+        }
+
+        public ArraySegment<byte> CreateMessageSegment(MessageDefinitions messageDefinitions)
+        {
+            return new ArraySegment<byte>(messageDefinitions.CreateXml().ToUtf8Bytes());
+        }
+
+        public T GetMessage<T>(string serializedObject)
+        {
+            return serializedObject.FromXml<T>();
         }
     }
 }

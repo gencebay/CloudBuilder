@@ -1,4 +1,6 @@
-﻿using Cloud.Common.DependencyInjection;
+﻿using Cloud.Common.Contracts;
+using Cloud.Common.DependencyInjection;
+using Cloud.Common.Interfaces;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
@@ -17,30 +19,35 @@ namespace Cloud.Common.UnitTests
 {
     public abstract class BaseUnitTest
     {
+        private IServiceCollection _serviceCollection;
+        protected IServiceProvider ServiceProvider { get; private set; }
+
         public BaseUnitTest()
         {
-
+            _serviceCollection = new ServiceCollection();
+            PrepareServiceProvider();
         }
 
         private T GetOptions<T>(Action<IServiceCollection> action = null) where T : class, new()
         {
-            var serviceProvider = GetServiceProvider(action);
+            var serviceProvider = PrepareServiceProvider(action);
             return serviceProvider.GetRequiredService<IOptions<T>>().Value;
         }
 
-        protected IServiceProvider GetServiceProvider(Action<IServiceCollection> action = null)
+        protected IServiceProvider PrepareServiceProvider(Action<IServiceCollection> action = null)
         {
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddTransient<ILoggerFactory, LoggerFactory>();
-            serviceCollection.AddMvc();
+            _serviceCollection.AddTransient<ILoggerFactory, LoggerFactory>();
+            _serviceCollection.AddSingleton<IClientMessageFactory, DefaultClientMessageFactory>();
+
+            _serviceCollection.AddMvc();
 
             if (action != null)
             {
-                action(serviceCollection);
+                action(_serviceCollection);
             }
 
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            return serviceProvider;
+            ServiceProvider = _serviceCollection.BuildServiceProvider();
+            return ServiceProvider;
         }
 
         protected void AddDnxServices(IServiceCollection serviceCollection)

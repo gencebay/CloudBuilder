@@ -1,9 +1,11 @@
-﻿using Cloud.Common.Interfaces;
+﻿using Cloud.Common.Configuration;
+using Cloud.Common.Interfaces;
 using Cloud.Server.Core;
 using Cloud.Server.Interfaces;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.OptionsModel;
 using System.Collections.Concurrent;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
@@ -20,7 +22,8 @@ namespace Cloud.Server.Middleware
         }
 
         public async Task Invoke(HttpContext httpContext, 
-            ILoggerFactory loggerFactory, 
+            ILoggerFactory loggerFactory,
+            IOptions<ServerSettings> settings,
             IClientMessageFactory messageFactory,
             ConcurrentBag<IMessageDispatcher> dispatcherBag)
         {
@@ -32,7 +35,7 @@ namespace Cloud.Server.Middleware
                 if (webSocket != null && webSocket.State == WebSocketState.Open)
                 {
                     // TODO: Handle the socket here.
-                    var messageDispatcher = new MessageDispatcher(messageFactory, webSocket);
+                    var messageDispatcher = new MessageDispatcher(settings, messageFactory, webSocket);
                     dispatcherBag.Add(messageDispatcher);
                     logger.LogInformation("WebSocket Initiated");
                 }

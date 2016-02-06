@@ -15,6 +15,7 @@ using Cloud.Server.Middleware;
 using Cloud.Server.Extensions;
 using Cloud.Common.Interfaces;
 using Cloud.Common.Contracts;
+using Cloud.Common.Configuration;
 
 namespace Cloud.Server
 {
@@ -31,6 +32,7 @@ namespace Cloud.Server
 
             Configuration = builder.Build();
 
+
             _dispatcherBag = new ConcurrentBag<IMessageDispatcher>();
         }
 
@@ -41,6 +43,9 @@ namespace Cloud.Server
         {
             // Add framework services.
             services.AddMvc();
+
+            // Configurations
+            services.Configure<ServerSettings>(Configuration.GetSection("AppSettings"));
 
             // Dependencies
             services.AddSingleton<IClientMessageFactory, DefaultClientMessageFactory>();

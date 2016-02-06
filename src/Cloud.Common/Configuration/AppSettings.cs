@@ -7,7 +7,7 @@
 
     public class ServerSettings : AppSettingsCommon
     {
-
+        public int DispatchInterval { get; set; }
     }
 
     public class ClientSettings : AppSettingsCommon

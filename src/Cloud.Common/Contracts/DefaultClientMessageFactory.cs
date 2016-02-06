@@ -6,12 +6,12 @@ namespace Cloud.Common.Contracts
 {
     public class DefaultClientMessageFactory : IClientMessageFactory
     {
-        public byte[] CreateMessage(MessageDefinitions messageDefinitions)
+        public byte[] CreateMessage(CommandDefinitions messageDefinitions)
         {
             return messageDefinitions.CreateXml().ToUtf8Bytes();
         }
 
-        public ArraySegment<byte> CreateMessageSegment(MessageDefinitions messageDefinitions)
+        public ArraySegment<byte> CreateMessageSegment(CommandDefinitions messageDefinitions)
         {
             return new ArraySegment<byte>(messageDefinitions.CreateXml().ToUtf8Bytes());
         }

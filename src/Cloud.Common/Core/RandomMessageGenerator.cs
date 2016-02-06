@@ -5,11 +5,11 @@ namespace Cloud.Common.Core
 {
     public static class RandomMessageGenerator
     {
-        public static List<MessageDefinitions> Messages = new List<MessageDefinitions>
+        public static List<CommandDefinitions> Messages = new List<CommandDefinitions>
         {
-            new MessageDefinitions
+            new CommandDefinitions
             {
-                Commands = new[] { CommandType.Build },
+                Commands = new[] { CommandType.Build, CommandType.Test },
                 Owner = "Server1",
                 Recipient = new Recipient
                 {
@@ -18,7 +18,18 @@ namespace Cloud.Common.Core
                 }
             },
 
-            new MessageDefinitions
+            new CommandDefinitions
+            {
+                Commands = new [] { CommandType.Test },
+                Owner = "Server1",
+                Recipient = new Recipient
+                {
+                    AssemblyName = "Sample.TestProject",
+                    Version = "1.0.0-*"
+                }
+            },
+
+            new CommandDefinitions
             {
                 Owner = "Server1",
                 Recipient = new Recipient

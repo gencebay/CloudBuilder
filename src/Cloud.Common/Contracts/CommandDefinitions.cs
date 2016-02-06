@@ -3,14 +3,14 @@ using System;
 
 namespace Cloud.Common.Contracts
 {
-    public class MessageDefinitions
+    public class CommandDefinitions
     {
         public CommandType[] Commands { get; set; }
         public string Owner { get; set; }
         public Recipient Recipient { get; set; }
         public DateTime CreatedDate { get; set; }
 
-        public MessageDefinitions()
+        public CommandDefinitions()
         {
             Commands = new[] { CommandType.Build, CommandType.Test };
             CreatedDate = DateTime.Now;

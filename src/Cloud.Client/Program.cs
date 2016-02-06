@@ -1,9 +1,12 @@
-﻿using Cloud.Common.Configuration;
+﻿using Cloud.Client.Core;
+using Cloud.Common.Configuration;
 using Microsoft.AspNetCore.WebSockets.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.PlatformAbstractions;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
@@ -15,15 +18,17 @@ namespace Cloud.Client
 {
     public class Program
     {
+
         private static readonly Dictionary<string, string> commandLineArgs = new Dictionary<string, string>
         {
             {"--text", "showText" },
             {"-t", "showText" },
         };
 
+        private static WebSocket _socket;
         private static IServiceProvider _serviceProvider;
-
-        private static IConfigurationRoot Configuration { get; set; }
+        private static IConfigurationRoot _configuration;
+        private static ClientSettings _settings;
 
         private static void ConfigureServices()
         {
@@ -32,8 +37,8 @@ namespace Cloud.Client
             var builder = new ConfigurationBuilder()
                .AddJsonFile("appsettings.json");
 
-            Configuration = builder.Build();
-            services.Configure<ClientSettings>(Configuration.GetSection("AppSettings"));
+            _configuration = builder.Build();
+            services.Configure<ClientSettings>(_configuration.GetSection("AppSettings"));
             _serviceProvider = services.BuildServiceProvider();
         }
 
@@ -41,47 +46,42 @@ namespace Cloud.Client
         {
             try
             {
+                AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
+                _settings = new ClientSettings();
                 ConfigureServices();
 
                 var config = new ConfigurationBuilder()
                     .AddCommandLine(args, commandLineArgs)
                     .Build();
 
-                Console.WriteLine("Press button to connect the server. Waiting to start...");
+                Console.WriteLine("Press the enter key to connect the server. Waiting to start...");
                 Console.ReadKey();
-                SimpleWork().Wait();
+                ConnectToWebSocket().Wait();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine($"Exception: {ex}");
             }
         }
 
-        private static async Task SimpleWork()
+        private static async Task ConnectToWebSocket()
         {
+            var settingsConfigurator = _serviceProvider.GetService<IConfigureOptions<ClientSettings>>();
+            settingsConfigurator.Configure(_settings);
             WebSocketClient client = new WebSocketClient();
-            WebSocket webSocket = await client.ConnectAsync(new Uri("ws://localhost:5005/"), CancellationToken.None);
-            while (webSocket.State == WebSocketState.Open)
+            _socket = await client.ConnectAsync(new Uri(_settings.SocketBaseHostAddress), CancellationToken.None);
+            while (_socket.State == WebSocketState.Open)
             {
-                var token = CancellationToken.None;
-                var buffer = new ArraySegment<byte>(new byte[4096]);
-
-                // Below will wait for a request message.
-                var received = await webSocket.ReceiveAsync(buffer, token);
-
-                switch (received.MessageType)
-                {
-                    case WebSocketMessageType.Text:
-                        //var request = Encoding.UTF8.GetString(buffer.Array,
-                        //                                      buffer.Offset,
-                        //                                      buffer.Count);
-
-                        var pushedData = Encoding.UTF8.GetString(buffer.Array).TrimEnd(new char[] { (char)0 });
-                        // Handle request here.
-                        Console.WriteLine("Server pushed data: " + pushedData);
-                        break;
-                }
+                var messageDispatcher = new ClientMessageDispatcher(_settings, _socket);
             }
+        }
+
+        static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        {
+            Console.WriteLine(e.ExceptionObject.ToString());
+            Console.WriteLine("Press Enter to continue");
+            Console.ReadLine();
+            Environment.Exit(1);
         }
     }
 }

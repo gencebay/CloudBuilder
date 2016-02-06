@@ -1,21 +1,14 @@
-﻿using Cloud.Server.Core;
-using Cloud.Server.Interfaces;
+﻿using Cloud.Common.Configuration;
+using Cloud.Common.Contracts;
+using Cloud.Common.Interfaces;
+using Cloud.Server.Core;
+using Cloud.Server.Extensions;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Concurrent;
-using System.Linq;
-using System.Net.WebSockets;
-using System.Text;
-using System.Threading;
-using Cloud.Server.Middleware;
-using Cloud.Server.Extensions;
-using Cloud.Common.Interfaces;
-using Cloud.Common.Contracts;
-using Cloud.Common.Configuration;
 
 namespace Cloud.Server
 {
@@ -32,7 +25,6 @@ namespace Cloud.Server
 
             Configuration = builder.Build();
 
-
             _dispatcherBag = new ConcurrentBag<IMessageDispatcher>();
         }
 
@@ -43,6 +35,9 @@ namespace Cloud.Server
         {
             // Add framework services.
             services.AddMvc();
+
+            // Api explorer
+            services.AddSwaggerGen();
 
             // Configurations
             services.Configure<ServerSettings>(Configuration.GetSection("AppSettings"));
@@ -67,7 +62,12 @@ namespace Cloud.Server
 
             app.UseWebSockets();
 
+            app.UseMvc();
+
             app.UseSocket();
+
+            app.UseSwaggerGen();
+            app.UseSwaggerUi();
         }
 
         // Entry point for the application.

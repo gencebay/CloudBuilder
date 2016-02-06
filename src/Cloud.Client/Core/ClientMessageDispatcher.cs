@@ -5,7 +5,9 @@ using Cloud.Common.Extensions;
 using Cloud.Common.Interfaces;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
 using System.Net.WebSockets;
 using System.Text;
@@ -33,7 +35,6 @@ namespace Cloud.Client.Core
             _clientId = Guid.NewGuid();
             _settings = settings;
             _webSocket = webSocket;
-            Listen().Wait();
         }
 
         private CommandDefinitions GetMessage(ArraySegment<byte> buffer, CancellationToken token)
@@ -42,7 +43,7 @@ namespace Cloud.Client.Core
             return serializedObject.FromXml<CommandDefinitions>();
         }
 
-        private async Task Listen()
+        public async Task Listen()
         {
             var token = CancellationToken.None;
             var buffer = new ArraySegment<byte>(new byte[_settings.MaxDataSize]);
@@ -80,36 +81,31 @@ namespace Cloud.Client.Core
 
         public async Task DoWork(CommandDefinitions command)
         {
-            // Start the child process.
-            //Process proc = new Process();
-            //proc.StartInfo.FileName = "dnu.cmd";
-            //proc.StartInfo.Arguments = "build";
-            //proc.StartInfo.WorkingDirectory = Environment.CurrentDirectory + "\\ToBeCompiled\\" + command.Recipient.AssemblyName;
-            //proc.StartInfo.UseShellExecute = false;
-            //proc.StartInfo.RedirectStandardOutput = true;
-            //proc.StartInfo.CreateNoWindow = true;
-            //proc.Start();
-
-            var proc = new Process
+            Process process = new Process()
             {
-                StartInfo = new ProcessStartInfo
+                StartInfo = new ProcessStartInfo("cmd")
                 {
-                    FileName = "dnu.cmd",
                     WorkingDirectory = Environment.CurrentDirectory + "\\ToBeCompiled\\" + command.Recipient.AssemblyName,
-                    Arguments = " build",
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
                     UseShellExecute = false,
-                    RedirectStandardOutput = true
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden
                 }
             };
 
-            proc.OutputDataReceived += Proc_OutputDataReceived;
+            process.Start();
+            process.StandardInput.WriteLine("dnu build");
 
-            proc.Start();
-            while (!proc.StandardOutput.EndOfStream)
-            {
-                string line = proc.StandardOutput.ReadLine();
-                Console.WriteLine(line);
-            }
+            process.StandardInput.Flush();
+            process.StandardInput.Close();
+
+            string output = process.StandardOutput.ReadToEnd();
+
+            process.WaitForExit();
+            process.Close();
+
+            Console.WriteLine(output);
 
             var context = new OperationResultContext
             {
@@ -117,14 +113,9 @@ namespace Cloud.Client.Core
                 Command = CommandType.Build,
                 CompletedDate = DateTime.Now,
                 State = true,
-                ResultInfo = "Sample result Info"
+                ResultInfo = output
             };
             await PostStatus(context);
-        }
-
-        private void Proc_OutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            Console.WriteLine(e.Data);
         }
     }
 }

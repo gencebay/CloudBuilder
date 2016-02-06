@@ -42,7 +42,6 @@ namespace Cloud.Client
         {
             try
             {
-                AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
                 _settings = new ClientSettings();
                 ConfigureServices();
 
@@ -52,7 +51,12 @@ namespace Cloud.Client
 
                 Console.WriteLine("Press the enter key to connect the server. Waiting to start...");
                 Console.ReadKey();
-                ConnectToWebSocket().Wait();
+
+                var socketTask = Task.Run(async () =>
+                {
+                    await ConnectToWebSocket();
+                });
+                socketTask.Wait();
             }
             catch (Exception ex)
             {
@@ -66,18 +70,12 @@ namespace Cloud.Client
             settingsConfigurator.Configure(_settings);
             WebSocketClient client = new WebSocketClient();
             _socket = await client.ConnectAsync(new Uri(_settings.SocketBaseHostAddress), CancellationToken.None);
+
             while (_socket.State == WebSocketState.Open)
             {
                 var messageDispatcher = new ClientMessageDispatcher(_settings, _socket);
+                await messageDispatcher.Listen();
             }
-        }
-
-        static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
-        {
-            Console.WriteLine(e.ExceptionObject.ToString());
-            Console.WriteLine("Press Enter to continue");
-            Console.ReadLine();
-            Environment.Exit(1);
         }
     }
 }

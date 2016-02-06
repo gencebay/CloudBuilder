@@ -3,7 +3,9 @@ using Cloud.Common.Contracts;
 using Cloud.Common.Core;
 using Cloud.Common.Extensions;
 using Cloud.Common.Interfaces;
+using Newtonsoft.Json;
 using System;
+using System.Net.Http;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -60,28 +62,34 @@ namespace Cloud.Client.Core
             }
         }
 
-        private void SendMessage(OperationResultContext operationResult)
+        private async Task PostStatus(OperationResultContext resultContext)
         {
-            var token = CancellationToken.None;
-            var type = WebSocketMessageType.Text;
-            var buffer = new ArraySegment<byte>(operationResult.CreateXml().ToUtf8Bytes());
-            _webSocket.SendAsync(buffer, type, true, token);
+            HttpRequestMessage request = new HttpRequestMessage();
+            HttpMethod httpMethod = HttpMethod.Get;
+            UriBuilder requestUri = new UriBuilder(_settings.ApiBaseHostAddress);
+            requestUri.Path = "api/Task/Completed";
+            request.Method = HttpMethod.Post;
+            request.RequestUri = requestUri.Uri;
+            request.Content = new StringContent(JsonConvert.SerializeObject(resultContext), Encoding.UTF8, "application/json");
+            using (var client = new HttpClient())
+            {
+                await client.SendAsync(request, CancellationToken.None);
+            }
         }
 
         public async Task DoWork(CommandDefinitions command)
         {
-            // This method should stay empty
-            // Following statement will prevent a compiler warning:
-            await Task.Delay(10000);
-            await Task.FromResult(0);
-            SendMessage(new OperationResultContext
+            await Task.Delay(5000);
+
+            var context = new OperationResultContext
             {
                 ClientId = ClientId,
                 Command = CommandType.Build,
                 CompletedDate = DateTime.Now,
                 State = true,
                 ResultInfo = "Sample result Info"
-            });
+            };
+            await PostStatus(context);
         }
     }
 }

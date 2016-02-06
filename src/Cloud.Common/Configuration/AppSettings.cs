@@ -13,6 +13,7 @@
 
     public class ClientSettings : AppSettingsCommon
     {
+        public string ApiBaseHostAddress { get; set; }
         public string SocketBaseHostAddress { get; set; }
     }
 }

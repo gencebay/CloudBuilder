@@ -1,4 +1,6 @@
 ﻿using Cloud.Common.Contracts;
+using Microsoft.Extensions.PlatformAbstractions;
+using System;
 using System.Collections.Generic;
 
 namespace Cloud.Common.Core
@@ -13,7 +15,7 @@ namespace Cloud.Common.Core
                 Owner = "Server1",
                 Recipient = new Recipient
                 {
-                    AssemblyName = "Sample.ConsoleApp",
+                    AssemblyName = "SampleApp",
                     Version = "1.0.0-*"
                 }
             },
@@ -24,20 +26,10 @@ namespace Cloud.Common.Core
                 Owner = "Server1",
                 Recipient = new Recipient
                 {
-                    AssemblyName = "Sample.TestProject",
+                    AssemblyName = "SampleApp.Tests",
                     Version = "1.0.0-*"
                 }
-            },
-
-            new CommandDefinitions
-            {
-                Owner = "Server1",
-                Recipient = new Recipient
-                {
-                    AssemblyName = "Sample.AnotherApp",
-                    Version = "1.0.0-*"
-                }
-            },
+            }
         };
     }
 }

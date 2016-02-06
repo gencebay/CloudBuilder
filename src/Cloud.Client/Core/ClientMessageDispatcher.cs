@@ -5,6 +5,7 @@ using Cloud.Common.Extensions;
 using Cloud.Common.Interfaces;
 using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.WebSockets;
 using System.Text;
@@ -79,7 +80,36 @@ namespace Cloud.Client.Core
 
         public async Task DoWork(CommandDefinitions command)
         {
-            await Task.Delay(5000);
+            // Start the child process.
+            //Process proc = new Process();
+            //proc.StartInfo.FileName = "dnu.cmd";
+            //proc.StartInfo.Arguments = "build";
+            //proc.StartInfo.WorkingDirectory = Environment.CurrentDirectory + "\\ToBeCompiled\\" + command.Recipient.AssemblyName;
+            //proc.StartInfo.UseShellExecute = false;
+            //proc.StartInfo.RedirectStandardOutput = true;
+            //proc.StartInfo.CreateNoWindow = true;
+            //proc.Start();
+
+            var proc = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "dnu.cmd",
+                    WorkingDirectory = Environment.CurrentDirectory + "\\ToBeCompiled\\" + command.Recipient.AssemblyName,
+                    Arguments = " build",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true
+                }
+            };
+
+            proc.OutputDataReceived += Proc_OutputDataReceived;
+
+            proc.Start();
+            while (!proc.StandardOutput.EndOfStream)
+            {
+                string line = proc.StandardOutput.ReadLine();
+                Console.WriteLine(line);
+            }
 
             var context = new OperationResultContext
             {
@@ -90,6 +120,11 @@ namespace Cloud.Client.Core
                 ResultInfo = "Sample result Info"
             };
             await PostStatus(context);
+        }
+
+        private void Proc_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            Console.WriteLine(e.Data);
         }
     }
 }

@@ -8,6 +8,6 @@ namespace Cloud.Common.Interfaces
     {
         Guid ClientId { get; }
         Task Listen();
-        Task DoWork(CommandDefinitions command);
+        Task DoWork(MessageDefinitions command);
     }
 }

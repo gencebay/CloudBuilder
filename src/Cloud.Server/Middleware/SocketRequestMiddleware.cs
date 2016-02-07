@@ -1,10 +1,11 @@
-﻿using Cloud.Common.Configuration;
-using Cloud.Common.Contracts;
-using Cloud.Common.Core;
+﻿using Cloud.Common;
+using Cloud.Common.Configuration;
+using Cloud.Common.Extensions;
 using Cloud.Common.Interfaces;
 using Cloud.Server.Core;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using System;
@@ -24,7 +25,8 @@ namespace Cloud.Server.Middleware
             this.next = next;
         }
 
-        public async Task Invoke(HttpContext httpContext, 
+        public async Task Invoke(HttpContext httpContext,
+            IServiceCollection services,
             ILoggerFactory loggerFactory,
             IOptions<ServerSettings> settings,
             IClientMessageFactory messageFactory,
@@ -37,26 +39,35 @@ namespace Cloud.Server.Middleware
                 var webSocket = await httpContext.WebSockets.AcceptWebSocketAsync();
                 if (webSocket != null && webSocket.State == WebSocketState.Open)
                 {
-                    var clientType = ClientType.Console;
-                    Guid clientId = Guid.Empty;
+                    // ClientId, Type and IsMaster
+                    Tuple<Guid, ClientType, bool> dispatchObjs = httpContext.DispatcherHelper();
+                    IMessageDispatcher dispatcher;
+                    if (dispatchObjs.Item3)
+                    {
+                        dispatcher = new MasterMessageDispatcher(settings,
+                            messageFactory,
+                            webSocket,
+                            dispatchObjs.Item1,
+                            dispatchObjs.Item2);
 
-                    if (httpContext.Request.Query["ClientId"].Count == 0)
-                        throw new ArgumentNullException("ClientId Required");
+                        // DI Container Registration for controller simple access to Master Dispatcher
+                        services.AddInstance(typeof(IMasterMessageDispatcher), dispatcher);
+                    }
+                    else
+                    {
+                        dispatcher = new MessageDispatcher(settings,
+                             messageFactory,
+                             webSocket,
+                             dispatchObjs.Item1,
+                             dispatchObjs.Item2);
+                    }
 
-                    clientId = Guid.Parse(httpContext.Request.Query["ClientId"]);
-
-                    if (httpContext.Request.Headers["User-Agent"].Count > 0)
-                        clientType = ClientType.Browser;
-
-                    if (httpContext.Request.Query["owner"].Count > 0)
-                        clientType = httpContext.Request.Query["owner"].ToString() == "Master" ? ClientType.Master : ClientType.Console;
-                    
-                    var messageDispatcher = new MessageDispatcher(settings, messageFactory, webSocket, clientId, clientType);
-                    dispatcherBag.Add(messageDispatcher);
+                    dispatcherBag.Add(dispatcher);
                     logger.LogInformation("WebSocket Initiated");
 
-                    if (clientType != ClientType.Master && clientType != ClientType.Unset)
-                        await NotifyToMaster(dispatcherBag.Where(x => x.ClientType == ClientType.Master).FirstOrDefault());
+                    // Ignore notification for self connection of Master App
+                    if (!dispatchObjs.Item3)
+                        await NotifyToMaster(dispatcherBag, dispatchObjs.Item1, dispatchObjs.Item2);
                 }
                 else
                 {
@@ -70,9 +81,11 @@ namespace Cloud.Server.Middleware
             }
         }
 
-        public async Task NotifyToMaster(IMessageDispatcher masterDispatcher)
+        public async Task NotifyToMaster(ConcurrentBag<IMessageDispatcher> dispatcher, Guid clientId, ClientType clientType)
         {
-            await masterDispatcher.SendConnectAsJsonAsync();
+            var masterDispatcher = (IMasterMessageDispatcher)dispatcher.Where(x => x.ClientType == ClientType.Master).FirstOrDefault();
+            if (masterDispatcher != null) { }
+                await masterDispatcher.SendConnectAsJsonAsync(clientId, clientType);
         }
     }
 }

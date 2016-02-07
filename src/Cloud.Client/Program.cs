@@ -40,7 +40,7 @@ namespace Cloud.Client
 
                 Console.WriteLine("Press the enter key to connect the server. Waiting to start...");
                 Console.ReadKey();
-
+                Console.WriteLine("Waiting for order!");
                 var socketTask = Task.Run(async () =>
                 {
                     await ConnectToWebSocket();

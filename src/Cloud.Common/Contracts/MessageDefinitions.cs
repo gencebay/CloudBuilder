@@ -3,18 +3,19 @@ using System;
 
 namespace Cloud.Common.Contracts
 {
-    public class CommandDefinitions
+    public class MessageDefinitions
     {
+        public Guid ClientId { get; set; }
         public ClientType ClientType { get; set; }
         public CommandType[] Commands { get; set; }
-        public Guid ClientId { get; set; }
         public string Owner { get; set; }
         public Recipient Recipient { get; set; }
         public DateTime CreatedDate { get; set; }
+        public string EventName { get; set; }
 
-        public CommandDefinitions()
+        public MessageDefinitions()
         {
-            Commands = new[] { CommandType.Build, CommandType.Test };
+            Commands = new[] { CommandType.Unset };
             CreatedDate = DateTime.Now;
         }
     }

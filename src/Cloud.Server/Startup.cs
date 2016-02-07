@@ -15,6 +15,7 @@ namespace Cloud.Server
 {
     public class Startup
     {
+        private readonly IMasterMessageDispatcher _masterMessageDispatcher;
         private readonly ConcurrentBag<IMessageDispatcher> _dispatcherBag;
 
         public Startup(IHostingEnvironment env)
@@ -51,6 +52,8 @@ namespace Cloud.Server
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
                 options.CookieName = ".Cloud.Server";
             });
+
+            services.AddSingleton(_ => services);
 
             // Dependencies
             services.AddSingleton<IClientMessageFactory, DefaultClientMessageFactory>();

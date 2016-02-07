@@ -56,4 +56,33 @@
 
 }(jQuery));
 
-var app = app || {};
+(function($, app, WebSocket){
+
+    'use strict';
+
+    app.ws = new WebSocket(app.context.appHost + "?clientId=" + app.context.clientId + "&owner=Master");
+
+    app.ws.onopen = function () {
+        // Web Socket is connected, send data using send()
+    };
+
+    app.ws.onmessage = function (e) {
+        var parsedMessage = JSON.parse(e.data);
+        console.log("Pushed: ", parsedMessage);
+
+        if ('ResultInfo' in parsedMessage) {
+            $('#logSectionPlaceHolder').empty();
+            $('#logSectionPlaceHolder').text(parsedMessage.ResultInfo);
+        }
+
+        if ('ClientId' in parsedMessage) {
+            console.log("Commands: ", parsedMessage.Commands);
+            $('#clientsSectionPlaceHolder').append('<li>' + parsedMessage.ClientId + ', Date: ' + parsedMessage.CreatedDate + '</li>')
+        }
+    };
+
+    app.ws.onclose = function () {
+        // websocket is closed.
+    };
+
+})(jQuery, app, window.WebSocket || undefined);

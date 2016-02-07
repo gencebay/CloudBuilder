@@ -10,14 +10,24 @@ namespace Cloud.Common.Interfaces
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        byte[] CreateJsonMessage(CommandDefinitions messageDefinitions);
+        byte[] CreateJsonMessage(MessageDefinitions messageDefinitions);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="eventName"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        byte[] CreateJsonMessage<T>(string messageResolver, T model);
+
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="messageDefinitions"></param>
         /// <returns></returns>
-        byte[] CreateXmlMessage(CommandDefinitions messageDefinitions);
+        byte[] CreateXmlMessage(MessageDefinitions messageDefinitions);
 
         /// <summary>
         /// 

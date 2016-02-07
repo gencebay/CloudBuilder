@@ -27,10 +27,10 @@ namespace Cloud.Common.UnitTests
         {
             var messageFactory = ServiceProvider.GetService<IClientMessageFactory>();
             
-            var encodedObject = messageFactory.CreateXmlMessage(new CommandDefinitions{ Owner = "Server1" });
+            var encodedObject = messageFactory.CreateXmlMessage(new MessageDefinitions{ Owner = "Server1" });
             Assert.NotNull(encodedObject);
 
-            var decodeObject = messageFactory.GetMessage<CommandDefinitions>(encodedObject.FromUtf8Bytes());
+            var decodeObject = messageFactory.GetMessage<MessageDefinitions>(encodedObject.FromUtf8Bytes());
             Assert.Equal(decodeObject.Owner, "Server1");
         }
     }

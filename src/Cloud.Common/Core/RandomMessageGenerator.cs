@@ -7,9 +7,9 @@ namespace Cloud.Common.Core
 {
     public static class RandomMessageGenerator
     {
-        public static List<CommandDefinitions> Messages = new List<CommandDefinitions>
+        public static List<MessageDefinitions> Messages = new List<MessageDefinitions>
         {
-            new CommandDefinitions
+            new MessageDefinitions
             {
                 Commands = new[] { CommandType.Build, CommandType.Test },
                 Owner = "Server1",
@@ -20,7 +20,7 @@ namespace Cloud.Common.Core
                 }
             },
 
-            new CommandDefinitions
+            new MessageDefinitions
             {
                 Commands = new [] { CommandType.Test },
                 Owner = "Server1",

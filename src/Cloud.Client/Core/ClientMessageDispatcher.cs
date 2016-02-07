@@ -1,4 +1,5 @@
-﻿using Cloud.Common.Configuration;
+﻿using Cloud.Common;
+using Cloud.Common.Configuration;
 using Cloud.Common.Contracts;
 using Cloud.Common.Core;
 using Cloud.Common.Extensions;
@@ -38,10 +39,10 @@ namespace Cloud.Client.Core
             _webSocket = webSocket;
         }
 
-        private CommandDefinitions GetMessage(ArraySegment<byte> buffer, CancellationToken token)
+        private MessageDefinitions GetMessage(ArraySegment<byte> buffer, CancellationToken token)
         {
             var serializedObject = Encoding.UTF8.GetString(buffer.Array).TrimEnd(new char[] { (char)0 });
-            return serializedObject.FromXml<CommandDefinitions>();
+            return serializedObject.FromXml<MessageDefinitions>();
         }
 
         public async Task Listen()
@@ -55,7 +56,7 @@ namespace Cloud.Client.Core
             switch (received.MessageType)
             {
                 case WebSocketMessageType.Text:
-                    CommandDefinitions command = GetMessage(buffer, token);
+                    MessageDefinitions command = GetMessage(buffer, token);
                     Console.WriteLine(
                         "Server pushed Command(s): " 
                         + string.Join(",", command.Commands) + "\t" 
@@ -63,18 +64,6 @@ namespace Cloud.Client.Core
 
                     if (!string.IsNullOrEmpty(command.Recipient.AssemblyName))
                         await DoWork(command);
-                    else
-                    {
-                        var context = new OperationResultContext
-                        {
-                            ClientId = ClientId,
-                            Command = CommandType.Build,
-                            CompletedDate = DateTime.Now,
-                            State = true,
-                            ResultInfo = ""
-                        };
-                        await PostStatus(context);
-                    }
                     break;
             }
         }
@@ -94,12 +83,12 @@ namespace Cloud.Client.Core
             }
         }
 
-        public async Task DoWork(CommandDefinitions command)
+        public async Task DoWork(MessageDefinitions message)
         {
             // Long running process;
             await Task.Delay(4000);
             var tobeCompiledPath = Path.Combine(Environment.CurrentDirectory, @"..\..\ToBeCompiled");
-            var projectPath = $"{tobeCompiledPath}\\{command.Recipient.AssemblyName}";
+            var projectPath = $"{tobeCompiledPath}\\{message.Recipient.AssemblyName}";
 
             Process process = new Process()
             {
@@ -133,7 +122,7 @@ namespace Cloud.Client.Core
                 ClientId = ClientId,
                 Command = CommandType.Build,
                 CompletedDate = DateTime.Now,
-                State = true,
+                State = OperationResultState.Success,
                 ResultInfo = output
             };
             await PostStatus(context);

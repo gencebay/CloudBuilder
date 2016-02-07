@@ -37,6 +37,11 @@
         </div>
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/js/app.js"></script>
+        <script type="text/javascript">
+            app.context.appHost = "ws://localhost:5005";
+            app.context.clientId = "@(Context.Session.GetOrSetGuid(Globals.ClientId))"
+        </script>
         <script src="~/js/site.js" asp-append-version="true"></script>                
         @RenderSection("scripts", required: false)
     </body>

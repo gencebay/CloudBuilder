@@ -11,8 +11,6 @@ namespace Cloud.Common.Interfaces
         Guid ClientId { get; }
         ClientType ClientType { get; }
         WebSocket WebSocet { get; }
-        void SendMessage(object state);
-        Task SendMessageAsync(OperationResultContext context);
-        Task SendConnectAsJsonAsync();
+        Task SendMessageAsync();
     }
 }

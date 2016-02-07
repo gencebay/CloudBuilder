@@ -1,4 +1,4 @@
-﻿namespace Cloud.Common.Core
+﻿namespace Cloud.Common
 {
     public enum ClientType
     {

@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Xml;
-using System.Xml.Serialization;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System;
 
 namespace Cloud.Common.Extensions
 {
@@ -13,7 +11,25 @@ namespace Cloud.Common.Extensions
             if (model == null)
                 throw new ArgumentNullException("Model required!");
 
-            return JsonConvert.SerializeObject(model);
+            var settings = new JsonSerializerSettings()
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+
+            return JsonConvert.SerializeObject(model, settings);
+        }
+
+        public static string CreateJson(this object model)
+        {
+            if (model == null)
+                throw new ArgumentNullException("Model required!");
+
+            var settings = new JsonSerializerSettings()
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+
+            return JsonConvert.SerializeObject(model, settings);
         }
     }
 }

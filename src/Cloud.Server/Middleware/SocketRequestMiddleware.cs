@@ -84,7 +84,7 @@ namespace Cloud.Server.Middleware
         public async Task NotifyToMaster(ConcurrentBag<IMessageDispatcher> dispatcher, Guid clientId, ClientType clientType)
         {
             var masterDispatcher = (IMasterMessageDispatcher)dispatcher.Where(x => x.ClientType == ClientType.Master).FirstOrDefault();
-            if (masterDispatcher != null) { }
+            if (masterDispatcher != null)
                 await masterDispatcher.SendConnectAsJsonAsync(clientId, clientType);
         }
     }

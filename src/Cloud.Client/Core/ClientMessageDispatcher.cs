@@ -81,11 +81,14 @@ namespace Cloud.Client.Core
 
         public async Task DoWork(CommandDefinitions command)
         {
+            var tobeCompiledPath = Path.Combine(Environment.CurrentDirectory, @"..\..\ToBeCompiled");
+            var projectPath = $"{tobeCompiledPath}\\{command.Recipient.AssemblyName}";
+
             Process process = new Process()
             {
                 StartInfo = new ProcessStartInfo("cmd")
                 {
-                    WorkingDirectory = Environment.CurrentDirectory + "\\ToBeCompiled\\" + command.Recipient.AssemblyName,
+                    WorkingDirectory = projectPath,
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
                     UseShellExecute = false,

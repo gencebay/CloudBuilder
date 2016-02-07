@@ -41,7 +41,6 @@ namespace Cloud.Server.Web.Hosting
 
             if (env.IsDevelopment())
             {
-                app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
             }
             else

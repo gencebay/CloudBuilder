@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNet.Mvc;
 
-namespace Cloud.Server.Web.Hosting.Controllers
+namespace Cloud.Server.Controllers
 {
     public class HomeController : Controller
     {

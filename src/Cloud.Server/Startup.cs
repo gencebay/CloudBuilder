@@ -56,17 +56,23 @@ namespace Cloud.Server
 
             var logger = loggerFactory.CreateLogger(nameof(Startup));
 
-            app.UseIISPlatformHandler();
+            app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
 
             app.UseStaticFiles();
 
             app.UseWebSockets();
 
-            app.UseMvc();
-
             app.UseSocket();
 
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
+
             app.UseSwaggerGen();
+
             app.UseSwaggerUi();
         }
 

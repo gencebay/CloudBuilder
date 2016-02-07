@@ -8,6 +8,7 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Concurrent;
 
 namespace Cloud.Server
@@ -36,11 +37,20 @@ namespace Cloud.Server
             // Add framework services.
             services.AddMvc();
 
+            // Adds a default in-memory implementation of IDistributedCache
+            services.AddCaching();
+
             // Api explorer
             services.AddSwaggerGen();
 
             // Configurations
             services.Configure<ServerSettings>(Configuration.GetSection("AppSettings"));
+
+            // Session
+            services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.CookieName = ".Cloud.Server";
+            });
 
             // Dependencies
             services.AddSingleton<IClientMessageFactory, DefaultClientMessageFactory>();
@@ -59,6 +69,8 @@ namespace Cloud.Server
             app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
 
             app.UseStaticFiles();
+
+            app.UseSession();
 
             app.UseWebSockets();
 

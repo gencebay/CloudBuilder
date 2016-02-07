@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.WebSockets;
 using System.Text;
@@ -30,9 +31,9 @@ namespace Cloud.Client.Core
             }
         }
 
-        public ClientMessageDispatcher(ClientSettings settings, WebSocket webSocket)
+        public ClientMessageDispatcher(ClientSettings settings, WebSocket webSocket, Guid clientId)
         {
-            _clientId = Guid.NewGuid();
+            _clientId = clientId;
             _settings = settings;
             _webSocket = webSocket;
         }
@@ -59,7 +60,21 @@ namespace Cloud.Client.Core
                         "Server pushed Command(s): " 
                         + string.Join(",", command.Commands) + "\t" 
                         +"to: " + command.Recipient.AssemblyName);
-                    await DoWork(command);
+
+                    if (!string.IsNullOrEmpty(command.Recipient.AssemblyName))
+                        await DoWork(command);
+                    else
+                    {
+                        var context = new OperationResultContext
+                        {
+                            ClientId = ClientId,
+                            Command = CommandType.Build,
+                            CompletedDate = DateTime.Now,
+                            State = true,
+                            ResultInfo = ""
+                        };
+                        await PostStatus(context);
+                    }
                     break;
             }
         }
@@ -81,6 +96,8 @@ namespace Cloud.Client.Core
 
         public async Task DoWork(CommandDefinitions command)
         {
+            // Long running process;
+            await Task.Delay(4000);
             var tobeCompiledPath = Path.Combine(Environment.CurrentDirectory, @"..\..\ToBeCompiled");
             var projectPath = $"{tobeCompiledPath}\\{command.Recipient.AssemblyName}";
 

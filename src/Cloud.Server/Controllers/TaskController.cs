@@ -4,7 +4,9 @@ using Cloud.Common.Interfaces;
 using Microsoft.AspNet.Mvc;
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Net.WebSockets;
+using System.Threading.Tasks;
 
 namespace Cloud.Server.Controllers
 {
@@ -26,9 +28,21 @@ namespace Cloud.Server.Controllers
         }
 
         [HttpPost("Completed")]
-        public void Completed([FromBody]OperationResultContext context)
+        public async Task Completed([FromBody]OperationResultContext context)
         {
+            if (context.State)
+            {
+                // Notify log to Master Server
+                var masterSocket = _dispatcherBag.Where(x => x.ClientType == ClientType.Master).FirstOrDefault();
+                if (masterSocket != null)
+                    await masterSocket.SendMessageAsync(context);
 
+                // Ready for new task
+                // Send random message
+                var clientSocket = _dispatcherBag.Where(x => x.ClientId == context.ClientId).FirstOrDefault();
+                if (clientSocket != null)
+                    clientSocket.SendMessage(new { dummy = true });
+            }
         }
     }
 }

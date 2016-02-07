@@ -7,6 +7,7 @@ namespace Cloud.Common.Contracts
     {
         public ClientType ClientType { get; set; }
         public CommandType[] Commands { get; set; }
+        public Guid ClientId { get; set; }
         public string Owner { get; set; }
         public Recipient Recipient { get; set; }
         public DateTime CreatedDate { get; set; }

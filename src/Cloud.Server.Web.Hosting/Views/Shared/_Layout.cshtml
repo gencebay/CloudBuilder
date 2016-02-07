@@ -44,7 +44,7 @@
 
                 if ("WebSocket" in window) {
 
-                    var ws = new WebSocket("ws://localhost:5005/");
+                    var ws = new WebSocket("ws://localhost:5005/?clientId=@(Context.Session.GetOrSetGuid("ClientId"))");
 
                     ws.onopen = function () {
                         // Web Socket is connected, send data using send()

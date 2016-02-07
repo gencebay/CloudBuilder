@@ -38,6 +38,12 @@ namespace Cloud.Server.Middleware
                 if (webSocket != null && webSocket.State == WebSocketState.Open)
                 {
                     var clientType = ClientType.Console;
+                    Guid clientId = Guid.Empty;
+
+                    if (httpContext.Request.Query["ClientId"].Count == 0)
+                        throw new ArgumentNullException("ClientId Required");
+
+                    clientId = Guid.Parse(httpContext.Request.Query["ClientId"]);
 
                     if (httpContext.Request.Headers["User-Agent"].Count > 0)
                         clientType = ClientType.Browser;
@@ -45,7 +51,7 @@ namespace Cloud.Server.Middleware
                     if (httpContext.Request.Query["owner"].Count > 0)
                         clientType = httpContext.Request.Query["owner"].ToString() == "Master" ? ClientType.Master : ClientType.Console;
                     
-                    var messageDispatcher = new MessageDispatcher(settings, messageFactory, webSocket, clientType);
+                    var messageDispatcher = new MessageDispatcher(settings, messageFactory, webSocket, clientId, clientType);
                     dispatcherBag.Add(messageDispatcher);
                     logger.LogInformation("WebSocket Initiated");
 

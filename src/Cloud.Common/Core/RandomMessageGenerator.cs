@@ -26,7 +26,7 @@ namespace Cloud.Common.Core
                 Owner = "Server1",
                 Recipient = new Recipient
                 {
-                    AssemblyName = "SampleApp.Tests",
+                    AssemblyName = "SampleApp.Test",
                     Version = "1.0.0-*"
                 }
             }

@@ -7,6 +7,7 @@ using System.Net.WebSockets;
 using System.Threading;
 using Cloud.Common.Contracts;
 using System.Threading.Tasks;
+using Cloud.Common.Extensions;
 
 namespace Cloud.Server.Core
 {
@@ -18,6 +19,7 @@ namespace Cloud.Server.Core
         private readonly WebSocket _webSocket;
         private readonly ClientType _clientType;
         private readonly DateTime _createdDate;
+        private readonly Guid _clientId;
 
         public WebSocket WebSocet
         {
@@ -35,18 +37,49 @@ namespace Cloud.Server.Core
             }
         }
 
+        public Guid ClientId
+        {
+            get
+            {
+                return _clientId;
+            }
+        }
+
         public MessageDispatcher(
             IOptions<ServerSettings> settings,
             IClientMessageFactory clientMessageFactory, 
             WebSocket webSocket,
+            Guid clientId,
             ClientType clientType)
         {
             _settings = settings;
             _clientMessageFactory = clientMessageFactory;
             _webSocket = webSocket;
-            _timer = new Timer(new TimerCallback(SendMessage), new { init = true }, 0, settings.Value.DispatchInterval);
+            _clientId = clientId;
             _clientType = clientType;
             _createdDate = DateTime.Now;
+
+            _timer = new Timer(new TimerCallback(SendHandShake), new { init = true }, 0, Timeout.Infinite);
+
+            // for random message sents
+            // _timer = new Timer(new TimerCallback(SendMessage), new { init = true }, 0, settings.Value.DispatchInterval);
+        }
+
+        private void SendHandShake(object state)
+        {
+            var token = CancellationToken.None;
+            var type = WebSocketMessageType.Text;
+            var message = new CommandDefinitions
+            {
+                ClientType = _clientType,
+                Commands = new[] { CommandType.Connect },
+                Recipient = new Recipient
+                {
+                    AssemblyName = ""
+                }
+            };
+            var buffer = new ArraySegment<byte>(_clientMessageFactory.CreateXmlMessage(message));
+            _webSocket.SendAsync(buffer, type, true, token);
         }
 
         public void SendMessage(object state)
@@ -69,6 +102,7 @@ namespace Cloud.Server.Core
         {
             var command = new CommandDefinitions
             {
+                ClientId = _clientId,
                 ClientType = _clientType,
                 Commands = new[] { CommandType.Connect },
                 Owner = "Server1",
@@ -78,6 +112,15 @@ namespace Cloud.Server.Core
             var token = CancellationToken.None;
             var type = WebSocketMessageType.Text;
             var buffer = new ArraySegment<byte>(_clientMessageFactory.CreateJsonMessage(command));
+            await _webSocket.SendAsync(buffer, type, true, token);
+        }
+
+        public async Task SendMessageAsync(OperationResultContext context)
+        {
+            var token = CancellationToken.None;
+            var type = WebSocketMessageType.Text;
+            var message = context.CreateJson().ToUtf8Bytes();
+            var buffer = new ArraySegment<byte>(message);
             await _webSocket.SendAsync(buffer, type, true, token);
         }
     }

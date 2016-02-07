@@ -5,31 +5,25 @@
 <div class="row">
     <div class="col-md-7">
         <h2>Active Clients</h2>
-        <div class="well" id="clientsSectionPlaceHolder">
+        <div class="well">
+            <ul id="clientsSectionPlaceHolder">
 
+            </ul>
         </div>
     </div>
     <div class="col-md-5">
         <h2>Logs</h2>
         <div class="well" id="logSectionPlaceHolder">
-
         </div>
     </div>
 </div>
-<script type="text/x-jquery-tmpl" id="clientTemplates">
-    <ul>
-        <% for ( var i = 0; i < clients.length; i++ ) { %>
-        <li></li>
-        <% } %>
-    </ul>
-</script>
 
 @section scripts{
     <script>
         $(document).ready(function () {
             if ("WebSocket" in window) {
 
-                app.ws = new WebSocket("ws://localhost:5005/?owner=Master");
+                app.ws = new WebSocket("ws://localhost:5005/?clientId=@(Context.Session.GetOrSetGuid("ClientId"))&owner=Master");
 
                 app.ws.onopen = function () {
                     // Web Socket is connected, send data using send()
@@ -38,7 +32,18 @@
 
                 app.ws.onmessage = function (evt) {
                     var parsedMessage = JSON.parse(evt.data);
-                    console.log(parsedMessage);
+                    console.log("NOTIFICATION: ", parsedMessage);
+
+                    if ('ResultInfo' in parsedMessage) {
+                        $('#logSectionPlaceHolder').empty();
+                        $('#logSectionPlaceHolder').text(parsedMessage.ResultInfo);
+                    }
+
+                    if ('ClientId' in parsedMessage) {
+                        console.log("Commands: ", parsedMessage.Commands);
+                        // Connect Command = 1
+                        $('#clientsSectionPlaceHolder').append('<li>' + parsedMessage.ClientId + ', Date: ' + parsedMessage.CreatedDate + '</li>')
+                    }
                     // $.publish('onmessage', JSON.parse(evt.data));
                 };
 

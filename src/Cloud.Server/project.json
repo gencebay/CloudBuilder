@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "1.0.0-*",
   "compilationOptions": {
     "emitEntryPoint": true
@@ -23,7 +23,8 @@
     "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
     "Microsoft.AspNet.WebSockets.Server": "1.0.0-rc1-final",
     "Swashbuckle.SwaggerGen": "6.0.0-rc1-final",
-    "Swashbuckle.SwaggerUi": "6.0.0-rc1-final"
+    "Swashbuckle.SwaggerUi": "6.0.0-rc1-final",
+    "Microsoft.AspNet.Session": "1.0.0-rc1-final"
   },
 
   "commands": {

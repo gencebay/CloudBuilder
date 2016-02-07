@@ -58,11 +58,13 @@ namespace Cloud.Client
             var settingsConfigurator = _serviceProvider.GetService<IConfigureOptions<ClientSettings>>();
             settingsConfigurator.Configure(_settings);
             WebSocketClient client = new WebSocketClient();
-            _socket = await client.ConnectAsync(new Uri(_settings.SocketBaseHostAddress), CancellationToken.None);
+            var clientId = Guid.NewGuid();
+            var uri = $"{_settings.SocketBaseHostAddress}?clientId=" + clientId;
+            _socket = await client.ConnectAsync(new Uri(uri), CancellationToken.None);
 
             while (_socket.State == WebSocketState.Open)
             {
-                var messageDispatcher = new ClientMessageDispatcher(_settings, _socket);
+                var messageDispatcher = new ClientMessageDispatcher(_settings, _socket, clientId);
                 await messageDispatcher.Listen();
             }
         }

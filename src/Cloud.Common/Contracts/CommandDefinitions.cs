@@ -5,6 +5,7 @@ namespace Cloud.Common.Contracts
 {
     public class CommandDefinitions
     {
+        public ClientType ClientType { get; set; }
         public CommandType[] Commands { get; set; }
         public string Owner { get; set; }
         public Recipient Recipient { get; set; }

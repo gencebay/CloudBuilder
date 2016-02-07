@@ -3,7 +3,8 @@
     public enum ClientType
     {
         Unset = 0,
-        Console = 1,
-        Browser = 2
+        Master = 1,
+        Console = 2,
+        Browser = 3
     }
 }

@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>@ViewData["Title"] - Cloud.Server.Web.Hosting</title>
+        <title>@ViewData["Title"] - Cloud Server</title>
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
     </head>
@@ -32,41 +32,12 @@
             @RenderBody()
             <hr />
             <footer>
-                <p>&copy; 2016 - Cloud.Server.Web.Hosting</p>
+                <p>&copy; 2016 - Cloud Server</p>
             </footer>
         </div>
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>                
         @RenderSection("scripts", required: false)
-        <script>
-            $(document).ready(function () {
-
-                if ("WebSocket" in window) {
-
-                    var ws = new WebSocket("ws://localhost:5005/");
-
-                    ws.onopen = function () {
-                        // Web Socket is connected, send data using send()
-                        ws.send("Message to send");
-                    };
-
-                    ws.onmessage = function (evt) {
-                        var received_msg = evt.data;
-                        console.log(received_msg);
-                    };
-
-                    ws.onclose = function () {
-                        // websocket is closed.
-                        console.warn("Connection is closed...");
-                    };
-                }
-
-                else {
-                    // The browser doesn't support WebSocket
-                    alert("WebSocket NOT supported by your Browser!");
-                }
-            });
-        </script>
     </body>
 </html>

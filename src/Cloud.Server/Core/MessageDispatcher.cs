@@ -5,6 +5,8 @@ using Microsoft.Extensions.OptionsModel;
 using System;
 using System.Net.WebSockets;
 using System.Threading;
+using Cloud.Common.Contracts;
+using System.Threading.Tasks;
 
 namespace Cloud.Server.Core
 {
@@ -15,6 +17,23 @@ namespace Cloud.Server.Core
         private readonly Timer _timer;
         private readonly WebSocket _webSocket;
         private readonly ClientType _clientType;
+        private readonly DateTime _createdDate;
+
+        public WebSocket WebSocet
+        {
+            get
+            {
+                return _webSocket;
+            }
+        }
+
+        public ClientType ClientType
+        {
+            get
+            {
+                return _clientType;
+            }
+        }
 
         public MessageDispatcher(
             IOptions<ServerSettings> settings,
@@ -27,6 +46,7 @@ namespace Cloud.Server.Core
             _webSocket = webSocket;
             _timer = new Timer(new TimerCallback(SendMessage), new { init = true }, 0, settings.Value.DispatchInterval);
             _clientType = clientType;
+            _createdDate = DateTime.Now;
         }
 
         public void SendMessage(object state)
@@ -43,6 +63,22 @@ namespace Cloud.Server.Core
                 buffer = new ArraySegment<byte>(_clientMessageFactory.CreateXmlMessage(message));
 
             _webSocket.SendAsync(buffer, type, true, token);
+        }
+
+        public async Task SendConnectAsJsonAsync()
+        {
+            var command = new CommandDefinitions
+            {
+                ClientType = _clientType,
+                Commands = new[] { CommandType.Connect },
+                Owner = "Server1",
+                CreatedDate = _createdDate
+            };
+
+            var token = CancellationToken.None;
+            var type = WebSocketMessageType.Text;
+            var buffer = new ArraySegment<byte>(_clientMessageFactory.CreateJsonMessage(command));
+            await _webSocket.SendAsync(buffer, type, true, token);
         }
     }
 }

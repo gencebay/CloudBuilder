@@ -10,14 +10,14 @@ namespace Cloud.Common.Interfaces
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        byte[] CreateMessage(CommandDefinitions messageDefinitions);
+        byte[] CreateJsonMessage(CommandDefinitions messageDefinitions);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="messageDefinitions"></param>
         /// <returns></returns>
-        ArraySegment<byte> CreateMessageSegment(CommandDefinitions messageDefinitions);
+        byte[] CreateXmlMessage(CommandDefinitions messageDefinitions);
 
         /// <summary>
         /// 

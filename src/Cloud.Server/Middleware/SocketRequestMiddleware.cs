@@ -1,4 +1,5 @@
 ﻿using Cloud.Common.Configuration;
+using Cloud.Common.Core;
 using Cloud.Common.Interfaces;
 using Cloud.Server.Core;
 using Microsoft.AspNet.Builder;
@@ -33,7 +34,11 @@ namespace Cloud.Server.Middleware
                 var webSocket = await httpContext.WebSockets.AcceptWebSocketAsync();
                 if (webSocket != null && webSocket.State == WebSocketState.Open)
                 {
-                    var messageDispatcher = new MessageDispatcher(settings, messageFactory, webSocket);
+                    var clientType = ClientType.Console;
+                    if (httpContext.Request.Headers["User-Agent"].Count > 0)
+                        clientType = ClientType.Browser;
+                    
+                    var messageDispatcher = new MessageDispatcher(settings, messageFactory, webSocket, clientType);
                     dispatcherBag.Add(messageDispatcher);
                     logger.LogInformation("WebSocket Initiated");
                 }

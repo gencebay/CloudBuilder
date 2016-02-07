@@ -12,13 +12,16 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EBB3E656-3331-4139-97C9-31FF90C0BE71}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		.travis.yml = .travis.yml
+		appveyor.yml = appveyor.yml
 		build.cmd = build.cmd
 		build.sh = build.sh
+		CONTRIBUTING.md = CONTRIBUTING.md
 		Dockerfile = Dockerfile
 		global.json = global.json
+		LICENSE.txt = LICENSE.txt
 		makefile.shade = makefile.shade
 		NuGet.config = NuGet.config
-		NuGet.master.config = NuGet.master.config
 		README.md = README.md
 	EndProjectSection
 EndProject

@@ -12,8 +12,8 @@ namespace Cloud.Server.Web.Hosting
         {
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+                .AddJsonFile("config.json")
+                .AddJsonFile($"config.{env.EnvironmentName}.json", optional: true);
 
             if (env.IsDevelopment())
             {
@@ -43,7 +43,6 @@ namespace Cloud.Server.Web.Hosting
             {
                 app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
             }
             else
             {
@@ -53,8 +52,6 @@ namespace Cloud.Server.Web.Hosting
             app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
 
             app.UseStaticFiles();
-
-            app.UseIdentity();
 
             app.UseMvc(routes =>
             {

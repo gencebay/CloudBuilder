@@ -1,0 +1,15 @@
+﻿{
+  "AppSettings": {
+    "Name": "Cloud Build Server",
+    "MaxDataSize": 4096,
+    "DispatchInterval": 9000
+  },
+  "Logging": {
+    "IncludeScopes": false,
+    "LogLevel": {
+      "Default": "Verbose",
+      "System": "Information",
+      "Microsoft": "Information"
+    }
+  }
+}

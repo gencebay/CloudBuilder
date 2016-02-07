@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.OptionsModel;
 using System;
-using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,13 +13,6 @@ namespace Cloud.Client
 {
     public class Program
     {
-
-        private static readonly Dictionary<string, string> commandLineArgs = new Dictionary<string, string>
-        {
-            {"--text", "showText" },
-            {"-t", "showText" },
-        };
-
         private static WebSocket _socket;
         private static IServiceProvider _serviceProvider;
         private static IConfigurationRoot _configuration;
@@ -43,11 +35,8 @@ namespace Cloud.Client
             try
             {
                 _settings = new ClientSettings();
-                ConfigureServices();
 
-                var config = new ConfigurationBuilder()
-                    .AddCommandLine(args, commandLineArgs)
-                    .Build();
+                ConfigureServices();
 
                 Console.WriteLine("Press the enter key to connect the server. Waiting to start...");
                 Console.ReadKey();

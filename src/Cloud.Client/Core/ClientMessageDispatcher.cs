@@ -95,7 +95,8 @@ namespace Cloud.Client.Core
             };
 
             process.Start();
-            process.StandardInput.WriteLine("dnu build");
+            // only if the command preceding the symbol is successful
+            process.StandardInput.WriteLine("dnu restore && dnu build && dnx run");
 
             process.StandardInput.Flush();
             process.StandardInput.Close();

@@ -1,7 +1,7 @@
 ﻿using Cloud.Common.Core;
-using Microsoft.AspNet.Http;
 using Microsoft.Net.Http.Headers;
 using System;
+using Microsoft.AspNetCore.Http;
 
 namespace Cloud.Common.Extensions
 {

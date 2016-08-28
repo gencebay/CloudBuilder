@@ -2,34 +2,29 @@
   "version": "1.0.0-*",
   "description": "Cloud.Common Class Library",
   "authors": [ "gedem" ],
-  "tags": [ "" ],
-  "projectUrl": "",
-  "licenseUrl": "",
 
   "dependencies": {
-    "Microsoft.AspNet.Cryptography.KeyDerivation": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
-    "Microsoft.AspNet.Mvc.Core": "6.0.0-rc1-final",
-    "Microsoft.Dnx.Compilation.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
-    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.Net.Http": "2.2.29",
-    "System.ComponentModel.Annotations": "4.0.11-beta-23516"
+    "Microsoft.AspNetCore.Mvc": "1.0.0",
+    "Microsoft.Extensions.DependencyInjection": "1.0.0",
+    "Microsoft.Extensions.Options": "1.0.0",
+    "Microsoft.Extensions.Configuration": "1.0.0",
+    "Microsoft.AspNetCore.Http": "1.0.0",
+    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0"
   },
 
   "frameworks": {
-    "dnx451": { },
-    "dnxcore50": {
+    "net451": {
       "dependencies": {
-        "Microsoft.CSharp": "4.0.1-*",
-        "System.Collections": "4.0.11-*",
-        "System.Linq": "4.0.1-*",
-        "System.Runtime": "4.0.21-*",
-        "System.Threading": "4.0.11-*",
-        "System.Net.Http": "4.0.1-*",
-        "System.Reflection.DispatchProxy": "4.0.1-*",
-        "System.Data.Common": "4.0.1-*",
-        "System.Xml.XmlSerializer": "4.0.11-*"
+        "System.Xml.XmlSerializer": "4.0.0"
+      }
+    },
+    "netstandard1.6": {
+      "imports": [
+        "dotnet5.6",
+        "portable-dnxcore50+net451+net45+win8+wp8+wpa81"
+      ],
+      "dependencies": {
+        "System.Xml.XmlSerializer": "4.0.11"
       }
     }
   }

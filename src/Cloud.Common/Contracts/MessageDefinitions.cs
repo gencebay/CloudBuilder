@@ -7,7 +7,7 @@ namespace Cloud.Common.Contracts
     {
         public Guid ClientId { get; set; }
         public ClientType ClientType { get; set; }
-        public CommandType[] Commands { get; set; }
+        public Commands[] Commands { get; set; }
         public string Owner { get; set; }
         public Recipient Recipient { get; set; }
         public DateTime CreatedDate { get; set; }
@@ -15,7 +15,7 @@ namespace Cloud.Common.Contracts
 
         public MessageDefinitions()
         {
-            Commands = new[] { CommandType.Unset };
+            Commands = new[] { Common.Commands.Unset };
             CreatedDate = DateTime.Now;
         }
     }

@@ -1,33 +1,33 @@
 ﻿{
   "version": "1.0.0-*",
-  "description": "Cloud.Client Console Application",
-  "authors": [ "gedem" ],
-  "tags": [ "" ],
-  "projectUrl": "",
-  "licenseUrl": "",
-
-  "compilationOptions": {
+  "buildOptions": {
+    "copyToOutput": {
+      "include": [ "appsettings.json" ]
+    },
+    "warningsAsErrors": true,
     "emitEntryPoint": true
   },
-
   "dependencies": {
-    "Microsoft.AspNetCore.WebSockets.Client": "0.1.0-*",
-    "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.CommandLine": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
-    "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
-    "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final",
-    "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
-    "xunit": "2.1.0",
-    "xunit.runner.dnx": "2.1.0-rc1-build204",
+    "Microsoft.NETCore.App": {
+      "type": "platform",
+      "version": "1.0.0"
+    },
+    "Microsoft.AspNetCore.WebSockets": "0.2.0-alpha1-21994",
+    "Microsoft.Extensions.Configuration": "1.0.0",
+    "Microsoft.Extensions.Configuration.Abstractions": "1.0.0",
+    "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0",
+    "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0",
+    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
     "Cloud.Common": "1.0.0-*"
   },
 
-  "commands": {
-    "Cloud.Client": "Cloud.Client"
-  },
-
   "frameworks": {
-    "dnx451": { }
+    "netcoreapp1.0": {
+      "imports": "dnxcore50",
+      "dependencies": {
+        "System.Net.WebSockets.Client": "4.0.0"
+      }
+    }
   }
 }

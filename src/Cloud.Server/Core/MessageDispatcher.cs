@@ -2,7 +2,7 @@
 using Cloud.Common.Configuration;
 using Cloud.Common.Core;
 using Cloud.Common.Interfaces;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.Extensions.Options;
 using System;
 using System.Net.WebSockets;
 using System.Threading;

@@ -1,5 +1,5 @@
 ﻿using Cloud.Common.Configuration;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.Extensions.Options;
 using System;
 
 namespace Cloud.Common.Contracts

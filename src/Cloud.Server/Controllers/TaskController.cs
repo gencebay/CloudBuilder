@@ -2,7 +2,7 @@
 using Cloud.Common.Core;
 using Cloud.Common.Interfaces;
 using Cloud.Common.Models;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;

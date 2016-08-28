@@ -3,16 +3,15 @@ using Cloud.Common.Configuration;
 using Cloud.Common.Extensions;
 using Cloud.Common.Interfaces;
 using Cloud.Server.Core;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Cloud.Server.Middleware
 {
@@ -51,7 +50,7 @@ namespace Cloud.Server.Middleware
                             dispatchObjs.Item2);
 
                         // DI Container Registration for controller simple access to Master Dispatcher
-                        services.AddInstance(typeof(IMasterMessageDispatcher), dispatcher);
+                        services.AddSingleton(typeof(IMasterMessageDispatcher), dispatcher);
                     }
                     else
                     {

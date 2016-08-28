@@ -4,6 +4,7 @@ using Cloud.Common.Contracts;
 using Cloud.Common.Core;
 using Cloud.Common.Extensions;
 using Cloud.Common.Interfaces;
+using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -87,7 +88,7 @@ namespace Cloud.Client.Core
         {
             // Long running process;
             await Task.Delay(4000);
-            var tobeCompiledPath = Path.Combine(Environment.CurrentDirectory, @"..\..\ToBeCompiled");
+            var tobeCompiledPath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, @"..\..\ToBeCompiled");
             var projectPath = $"{tobeCompiledPath}\\{message.Recipient.AssemblyName}";
 
             Process process = new Process()
@@ -98,29 +99,26 @@ namespace Cloud.Client.Core
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
-                    CreateNoWindow = true,
-                    WindowStyle = ProcessWindowStyle.Hidden
+                    CreateNoWindow = true
                 }
             };
 
             process.Start();
             // only if the command preceding the symbol is successful
-            process.StandardInput.WriteLine("dnu restore && dnu build && dnx run");
-
+            process.StandardInput.WriteLine("dotnet build");
             process.StandardInput.Flush();
-            process.StandardInput.Close();
 
             string output = process.StandardOutput.ReadToEnd();
 
             process.WaitForExit();
-            process.Close();
+            process.Dispose();
 
             Console.WriteLine(output);
 
             var context = new OperationResultContext
             {
                 ClientId = ClientId,
-                Command = CommandType.Build,
+                Command = Commands.Build,
                 CompletedDate = DateTime.Now,
                 State = OperationResultState.Success,
                 ResultInfo = output

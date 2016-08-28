@@ -1,6 +1,6 @@
 ﻿namespace Cloud.Common
 {
-    public enum CommandType
+    public enum Commands
     {
         Unset = 0,
         Build = 1,

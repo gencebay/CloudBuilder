@@ -1,32 +1,19 @@
 ﻿{
   "version": "1.0.0-*",
-  "description": "SampleApp Console Application",
-  "authors": [ "Gencebay" ],
-  "tags": [ "" ],
-  "projectUrl": "",
-  "licenseUrl": "",
-
-  "compilationOptions": {
+  "buildOptions": {
     "emitEntryPoint": true
   },
 
   "dependencies": {
-  },
-
-  "commands": {
-    "SampleApp": "SampleApp"
+    "Microsoft.NETCore.App": {
+      "type": "platform",
+      "version": "1.0.0"
+    }
   },
 
   "frameworks": {
-    "dnx451": { },
-    "dnxcore50": {
-      "dependencies": {
-        "Microsoft.CSharp": "4.0.1-beta-23516",
-        "System.Collections": "4.0.11-beta-23516",
-        "System.Console": "4.0.0-beta-23516",
-        "System.Linq": "4.0.1-beta-23516",
-        "System.Threading": "4.0.11-beta-23516"
-      }
+    "netcoreapp1.0": {
+      "imports": "dnxcore50"
     }
   }
 }

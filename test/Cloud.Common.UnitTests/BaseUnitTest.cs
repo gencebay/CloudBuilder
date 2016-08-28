@@ -1,16 +1,12 @@
 ﻿using Cloud.Common.Contracts;
-using Cloud.Common.DependencyInjection;
 using Cloud.Common.Interfaces;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Abstractions;
-using Microsoft.AspNet.Routing;
-using Microsoft.Dnx.Compilation;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
-using Microsoft.Extensions.PlatformAbstractions;
+using Microsoft.Extensions.Options;
 using Moq;
 using System;
 using System.IO;
@@ -48,22 +44,6 @@ namespace Cloud.Common.UnitTests
 
             ServiceProvider = _serviceCollection.BuildServiceProvider();
             return ServiceProvider;
-        }
-
-        protected void AddDnxServices(IServiceCollection serviceCollection)
-        {
-            serviceCollection.AddSingleton(Mock.Of<ILibraryManager>());
-            serviceCollection.AddSingleton(Mock.Of<ILibraryExporter>());
-            serviceCollection.AddSingleton(Mock.Of<ICompilerOptionsProvider>());
-            serviceCollection.AddSingleton(Mock.Of<IAssemblyLoadContextAccessor>());
-            serviceCollection.AddSingleton(Mock.Of<IHostingEnvironment>());
-            var applicationEnvironment = new Mock<IApplicationEnvironment>();
-
-            // ApplicationBasePath is used to set up a PhysicalFileProvider which requires a real directory.
-            applicationEnvironment.SetupGet(e => e.ApplicationBasePath)
-                .Returns(Directory.GetCurrentDirectory());
-
-            serviceCollection.AddSingleton(applicationEnvironment.Object);
         }
 
         protected ActionContext CreateActionContext(HttpContext context = null)

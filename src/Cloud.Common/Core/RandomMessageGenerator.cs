@@ -11,7 +11,7 @@ namespace Cloud.Common.Core
         {
             new MessageDefinitions
             {
-                Commands = new[] { CommandType.Build, CommandType.Test },
+                Commands = new[] { Commands.Build, Commands.Test },
                 Owner = "Server1",
                 Recipient = new Recipient
                 {
@@ -22,7 +22,7 @@ namespace Cloud.Common.Core
 
             new MessageDefinitions
             {
-                Commands = new [] { CommandType.Test },
+                Commands = new [] { Commands.Test },
                 Owner = "Server1",
                 Recipient = new Recipient
                 {

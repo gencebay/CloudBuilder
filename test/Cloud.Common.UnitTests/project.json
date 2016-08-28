@@ -1,40 +1,28 @@
 ﻿{
-  "version": "1.0.0-*",
-  "description": "Cloud.Common.UnitTests Class Library",
-  "authors": [ "gedem" ],
-  "tags": [ "" ],
-  "projectUrl": "",
-  "licenseUrl": "",
-
+  "buildOptions": {
+    "copyToOutput": {
+      "include": [ "appsettings.json" ]
+    },
+    "warningsAsErrors": true
+  },
   "dependencies": {
-    "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
-    "xunit": "2.1.0-rc1-build3168",
-    "xunit.runner.dnx": "2.1.0-rc1-build204",
-    "Microsoft.AspNet.WebSockets.Server": "1.0.0-rc1-final",
+    "xunit": "2.1.0",
+    "dotnet-test-xunit": "1.0.0-rc3-000000-00",
+    "Microsoft.NETCore.Platforms": "1.0.1",
+    "Microsoft.AspNetCore.Mvc": "1.0.0",
+    "Microsoft.AspNetCore.Testing": "1.0.0-rtm-21431",
+    "Microsoft.Extensions.Logging": "1.0.0",
     "Cloud.Common": "1.0.0-*",
     "Cloud.Server": "1.0.0-*"
   },
 
+  "testRunner": "xunit",
+
   "frameworks": {
-    "dnx451": {
+    "net46": {
       "dependencies": {
         "Moq": "4.2.1312.1622"
       }
-    },
-    "dnxcore50": {
-      "dependencies": {
-        "Microsoft.CSharp": "4.0.1-*",
-        "System.Collections": "4.0.11-*",
-        "System.Linq": "4.0.1-*",
-        "System.Runtime": "4.0.21-*",
-        "System.Threading": "4.0.11-*",
-        "moq.netcore": "4.4.0-beta8"
-      }
     }
-  },
-
-  "commands": {
-    "test": "xunit.runner.dnx"
   }
 }

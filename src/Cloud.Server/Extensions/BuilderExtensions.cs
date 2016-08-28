@@ -1,5 +1,5 @@
 ﻿using Cloud.Server.Middleware;
-using Microsoft.AspNet.Builder;
+using Microsoft.AspNetCore.Builder;
 
 namespace Cloud.Server.Extensions
 {

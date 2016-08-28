@@ -7,7 +7,7 @@ namespace Cloud.Common.Contracts
     {
         public Guid ClientId { get; set; }
         public string ResultInfo { get; set; }
-        public CommandType Command { get; set; }
+        public Commands Command { get; set; }
         public OperationResultState State { get; set; }
         public DateTime CompletedDate { get; set; }
     }

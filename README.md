@@ -1,7 +1,7 @@
 ###Cross-Platform Cloud Optimized .NET Build Automation
 
 ####Prerequisites
-> [DNVM](https://github.com/aspnet/Home), (.NET Core CLR - dotnet cli)
+> [dotnet](https://github.com/aspnet/Home), (.NET Core CLR - dotnet cli)
 > [Docs](https://docs.asp.net/en/latest/)
 
 ####Installation

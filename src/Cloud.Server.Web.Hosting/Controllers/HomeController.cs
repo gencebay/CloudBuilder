@@ -1,5 +1,6 @@
 ﻿using Cloud.Common.Extensions;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Session;
 
 namespace Cloud.Server.Web.Hosting.Controllers
 {
@@ -7,7 +8,8 @@ namespace Cloud.Server.Web.Hosting.Controllers
     {
         public IActionResult Index()
         {
-            HttpContext.Session.GetOrSetGuid("ClientId");
+            // HttpContext.Session.GetOrSetGuid("ClientId");
+            var sessionId = HttpContext.Session.Id;
             return View();
         }
 

@@ -9,11 +9,14 @@
     "Microsoft.Extensions.Options": "1.0.0",
     "Microsoft.Extensions.Configuration": "1.0.0",
     "Microsoft.AspNetCore.Http": "1.0.0",
-    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0"
+    "Microsoft.AspNetCore.Diagnostics": "1.0.0",
+    "Microsoft.Extensions.Logging.Debug": "1.0.0",
+    "Microsoft.Extensions.Logging.Console": "1.0.0",
+    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
   },
 
   "frameworks": {
-    "net451": {
+    "net46": {
       "dependencies": {
         "System.Xml.XmlSerializer": "4.0.0"
       }

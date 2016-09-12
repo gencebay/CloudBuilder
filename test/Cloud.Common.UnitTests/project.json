@@ -17,6 +17,11 @@
   "testRunner": "xunit",
   "frameworks": {
     "netcoreapp1.0": {
+      "imports": [
+        "dotnet5.6",
+        "dnxcore50",
+        "portable-net45+win8"
+      ],
       "dependencies": {
         "Cloud.Server": "1.0.0-*",
         "Microsoft.NETCore.App": {
